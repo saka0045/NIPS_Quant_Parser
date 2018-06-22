@@ -9,7 +9,7 @@ Created on Thu Jun 21 14:39:11 2018
 from openpyxl import load_workbook
 import os
 
-basedir = '/Users/m006703/NIPS/RTF/'
+basedir = '/Users/m006703/NIPS/RTF/' #Change this directory to where the RTFs are stored
 fileList = os.listdir(basedir)
 
 sampleNameList = []
@@ -19,17 +19,20 @@ averageSizeList = []
 runNameList = []
 
 for file in fileList:
+    #Make sure it's a NIPS RTF
     if file[0:4] == 'NIPS':
         filePath = basedir + file
+        #This script will work but the result file will be messed up if it's not in the form of NIPS###_RTF.xlsm
         runName = file.split('_')[0]
         print("Processing file: " + filePath)
-    
+        #Make sure the read_only=True is there, otherwise it takes forever!
         wb = load_workbook(filePath, data_only = True, read_only=True)
         
         quantSheet = wb.get_sheet_by_name('DNA Quantitation')
     
         for x in range (4, 999):
             try:
+                #Sometimes the NTC is NPP-NTC or NTC...
                 if 'NTC' in (quantSheet.cell(row = x, column = 2).value):
                     break
                 else:
@@ -53,7 +56,7 @@ for file in fileList:
                             averageSize = 'NA'
                     averageSizeList.append(averageSize)
                     runNameList.append(runName)
-                    
+            #Skip if there are any blank lines between samples and NTC        
             except TypeError:
                 continue
                 
